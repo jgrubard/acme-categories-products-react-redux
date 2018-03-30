@@ -25252,7 +25252,7 @@ module.exports = function spread(callback) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.getCategoriesThunk = undefined;
+exports.createCategoryThunk = exports.getCategoriesThunk = undefined;
 
 var _axios = __webpack_require__(42);
 
@@ -25260,7 +25260,10 @@ var _axios2 = _interopRequireDefault(_axios);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
 var GET_CATEGORIES = 'GET_CATEGORIES';
+var CREATE_CATEGORY = 'CREATE_CATEGORY';
 
 var getCategoriesThunk = exports.getCategoriesThunk = function getCategoriesThunk() {
   return function (dispatch) {
@@ -25268,6 +25271,18 @@ var getCategoriesThunk = exports.getCategoriesThunk = function getCategoriesThun
       return res.data;
     }).then(function (categories) {
       return dispatch({ type: GET_CATEGORIES, categories: categories });
+    }).catch(function (err) {
+      return console.error(err);
+    });
+  };
+};
+
+var createCategoryThunk = exports.createCategoryThunk = function createCategoryThunk(category) {
+  return function (dispatch) {
+    return _axios2.default.post('/api/categories', category).then(function (res) {
+      return res.data;
+    }).then(function (category) {
+      return dispatch({ type: CREATE_CATEGORY, category: category });
     }).catch(function (err) {
       return console.error(err);
     });
@@ -25282,6 +25297,9 @@ var reducer = function reducer() {
 
     case GET_CATEGORIES:
       return action.categories;
+
+    case CREATE_CATEGORY:
+      return [].concat(_toConsumableArray(state), [action.category]);
   }
   return state;
 };
@@ -28404,9 +28422,18 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var Home = function Home() {
   return _react2.default.createElement(
-    'p',
+    'div',
     null,
-    'Home Page'
+    _react2.default.createElement(
+      'h4',
+      null,
+      'Welcome!'
+    ),
+    _react2.default.createElement(
+      'p',
+      null,
+      'Here, you will be generating new categories! And you can generate new products for each category! What fun!'
+    )
   );
 };
 
@@ -28429,13 +28456,20 @@ var _react2 = _interopRequireDefault(_react);
 
 var _reactRouterDom = __webpack_require__(48);
 
+var _store = __webpack_require__(41);
+
 var _reactRedux = __webpack_require__(9);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var Nav = function Nav(props) {
   var products = props.products,
-      categories = props.categories;
+      categories = props.categories,
+      createCategory = props.createCategory;
+
+  // if(!categories) {
+  //   return null;
+  // }
 
   return _react2.default.createElement(
     'div',
@@ -28448,7 +28482,9 @@ var Nav = function Nav(props) {
         null,
         _react2.default.createElement(
           'button',
-          null,
+          { onClick: function onClick(ev) {
+              return createCategory(ev);
+            } },
           'Add Category'
         )
       ),
@@ -28481,7 +28517,9 @@ var Nav = function Nav(props) {
             { to: '/categories/' + category.id },
             category.name,
             ': (',
-            category.products.length,
+            products.filter(function (product) {
+              return product.categoryId === category.id;
+            }).length,
             ') Products'
           )
         );
@@ -28497,7 +28535,16 @@ var mapStateToProps = function mapStateToProps(state) {
   };
 };
 
-exports.default = (0, _reactRedux.connect)(mapStateToProps)(Nav);
+var mapDispatchToProps = function mapDispatchToProps(dispatch) {
+  return {
+    createCategory: function createCategory(ev) {
+      ev.preventDefault();
+      dispatch((0, _store.createCategoryThunk)({ name: 'Category Test' }));
+    }
+  };
+};
+
+exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Nav);
 
 /***/ }),
 /* 143 */

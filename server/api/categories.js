@@ -14,3 +14,9 @@ router.get('/', (req, res, next) => {
     .then(categories => res.send(categories))
     .catch(next);
 })
+
+router.post('/', (req, res, next) => {
+  Category.create(req.body)
+    .then(category => res.send(category))
+    .catch(next)
+})

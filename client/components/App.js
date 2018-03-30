@@ -1,10 +1,38 @@
-import React from 'react';
+import React, { Component } from 'react';
+import { HashRouter as Router, Route } from 'react-router-dom';
+import { connect } from 'react-redux';
 
-const App = () => {
+import { getProductsThunk, getCategoriesThunk } from '../store'
 
-  return (
-    <hr />
-  );
+class App extends Component {
+
+  componentDidMount() {
+    this.props.loadProducts();
+    this.props.loadCategories();
+  }
+
+  render() {
+    return (
+      <Router>
+        <div>
+          <h1>ACME</h1>
+        </div>
+      </Router>
+    );
+  }
 }
 
-export default App;
+const mapStateToProps = (state) => {
+  return {
+    products: state.products
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    loadProducts: () => dispatch(getProductsThunk()),
+    loadCategories: () => dispatch(getCategoriesThunk())
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

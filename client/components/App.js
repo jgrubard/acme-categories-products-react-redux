@@ -4,6 +4,11 @@ import { connect } from 'react-redux';
 
 import { getProductsThunk, getCategoriesThunk } from '../store'
 
+import Home from './Home';
+import Nav from './Nav';
+import Products from './Products';
+import Category from './Category';
+
 class App extends Component {
 
   componentDidMount() {
@@ -16,15 +21,13 @@ class App extends Component {
       <Router>
         <div>
           <h1>ACME</h1>
+          <Route component={Nav} />
+          <Route exact path='/' component={Home} />
+          <Route exact path='/products' component={Products} />
+          <Route exact path='/categories/:id' component={Category} />
         </div>
       </Router>
     );
-  }
-}
-
-const mapStateToProps = (state) => {
-  return {
-    products: state.products
   }
 }
 
@@ -35,4 +38,4 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default connect(null, mapDispatchToProps)(App);

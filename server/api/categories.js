@@ -5,8 +5,12 @@ const { Product, Category } = db.models;
 module.exports = router;
 
 router.get('/', (req, res, next) => {
-  Category.findAll()
+  Category.findAll({
+    include: {
+      model: Product,
+      as: 'products'
+    }
+  })
     .then(categories => res.send(categories))
     .catch(next);
 })
-

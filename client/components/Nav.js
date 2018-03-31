@@ -58,7 +58,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     createCategory: (ev) => {
       ev.preventDefault();
-      dispatch(createCategoryThunk({ name: 'Category Test' }));
+      dispatch(createCategoryThunk({ name: `Category-${Math.round(Math.random()*999)}`}));
     }
   }
 }

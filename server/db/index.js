@@ -1,6 +1,7 @@
 const { _conn, Sequelize } = require('./conn');
-const Product = require('./models/Product')
-const Category = require('./models/Category')
+const Product = require('./models/Product');
+const Category = require('./models/Category');
+const faker = require('faker');
 
 Product.belongsTo(Category, { as: 'category' });
 Category.hasMany(Product, { as: 'products', foreignKey: 'categoryId' })
@@ -11,15 +12,15 @@ const sync = () => {
 
 const seed = () => {
   return Promise.all([
-    Category.create({ name: 'Category A'}),
-    Category.create({ name: 'Category B'}),
-    Category.create({ name: 'Category C'}),
-    Product.create({ name: 'Product 1'}),
-    Product.create({ name: 'Product 2'}),
-    Product.create({ name: 'Product 3'}),
-    Product.create({ name: 'Product 4'}),
-    Product.create({ name: 'Product 5'}),
-    Product.create({ name: 'Product 6'})
+    Category.create({ name: `Category-${Math.round(Math.random()*999)}`}),
+    Category.create({ name: `Category-${Math.round(Math.random()*999)}`}),
+    Category.create({ name: `Category-${Math.round(Math.random()*999)}`}),
+    Product.create({ name: faker.commerce.productName()}),
+    Product.create({ name: faker.commerce.productName()}),
+    Product.create({ name: faker.commerce.productName()}),
+    Product.create({ name: faker.commerce.productName()}),
+    Product.create({ name: faker.commerce.productName()}),
+    Product.create({ name: faker.commerce.productName()})
   ])
   .then(([ catergoryA, catergoryB, catergoryC, product1, product2, product3, product4, product5, product6, ]) => {
     return Promise.all([

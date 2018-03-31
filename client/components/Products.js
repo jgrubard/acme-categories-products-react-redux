@@ -1,8 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { deleteProductThunk } from '../store'
 
 const Products = (props) => {
-  const { products, categories } = props;
+  const { products, categories, deleteProduct } = props;
   if(!categories || !products) {
     return null
   }
@@ -15,7 +16,7 @@ const Products = (props) => {
               {product.name}
               <br />
               {categories.find(category => category.id === product.categoryId).name}
-              <button>Delete</button>
+              <button onClick={() => deleteProduct(product)}>Delete</button>
             </li>
           ))
         }
@@ -31,4 +32,10 @@ const mapStateToProps = (state) => {
   }
 }
 
-export default connect(mapStateToProps)(Products);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    deleteProduct: (product) => dispatch(deleteProductThunk(product))
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Products);

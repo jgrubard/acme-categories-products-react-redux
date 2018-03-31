@@ -28991,6 +28991,7 @@ var Category = function Category(props) {
   return _react2.default.createElement(
     'div',
     null,
+    _react2.default.createElement('hr', null),
     _react2.default.createElement(
       'h3',
       null,
@@ -29009,6 +29010,12 @@ var Category = function Category(props) {
           return createProduct(category.id);
         }, className: 'btn btn-primary' },
       'Add Product'
+    ),
+    _react2.default.createElement('hr', null),
+    _react2.default.createElement(
+      'h4',
+      null,
+      'Products'
     ),
     _react2.default.createElement(
       'div',

@@ -11,9 +11,12 @@ const Category = (props) => {
   }
   return (
     <div>
+      <hr />
       <h3>{category.name}</h3>
       <button onClick={() => deleteCategory(products, category)} className='btn btn-danger' style={{'marginRight':'10px'}}>Delete Category</button>
       <button onClick={() => createProduct(category.id)} className='btn btn-primary'>Add Product</button>
+      <hr />
+      <h4>Products</h4>
       <div className='category-container' style={{'marginTop':'10px'}}>
         {
           products.filter(product => product.categoryId === category.id).map(product => (

@@ -4,23 +4,23 @@ import { deleteProductThunk } from '../store'
 
 const Products = (props) => {
   const { products, categories, deleteProduct } = props;
-  if(!categories || !products) {
+  if(!categories.length || !products.length) {
     return null
   }
   return (
-    <div>
-      <ul>
+    <div style={{'marginTop':'10px'}}>
+      <h3>All Products</h3>
+      <div className='category-container'>
         {
           products.map(product => (
-            <li key={product.id}>
-              {product.name}
-              <br />
-              {categories.find(category => category.id === product.categoryId).name}
-              <button onClick={() => deleteProduct(product)}>Delete</button>
-            </li>
+            <div key={product.id} className='category-item'>
+              <h5><b>{product.name}</b></h5>
+              <div><i>{categories.find(category => category.id === product.categoryId).name}</i></div>
+              <button onClick={() => deleteProduct(product)} className='btn btn-danger' style={{'marginTop': '10px'}}>Delete</button>
+            </div>
           ))
         }
-      </ul>
+      </div>
     </div>
   );
 }

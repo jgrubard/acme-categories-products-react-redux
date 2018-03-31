@@ -4,7 +4,11 @@ const path = require('path');
 const db = require('./db');
 const { Product, Category } = db.models;
 
-app.use('/public', express.static(path.join(__dirname, '../public')))
+app.use('/public', express.static(path.join(__dirname, '../public')));
+
+app.use('/vendors', express.static(path.join(__dirname, '../node_modules')));
+
+app.use('/style', express.static(path.join(__dirname, '../public/style')));
 
 app.use(require('body-parser').json());
 

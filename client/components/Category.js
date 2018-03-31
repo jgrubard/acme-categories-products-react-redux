@@ -12,17 +12,17 @@ const Category = (props) => {
   return (
     <div>
       <h3>{category.name}</h3>
-      <button onClick={() => deleteCategory(products, category)}>Delete Category</button>
-      <button onClick={() => createProduct(category.id)}>Add Product</button>
-      <ul>
+      <button onClick={() => deleteCategory(products, category)} className='btn btn-danger' style={{'marginRight':'10px'}}>Delete Category</button>
+      <button onClick={() => createProduct(category.id)} className='btn btn-primary'>Add Product</button>
+      <div className='category-container' style={{'marginTop':'10px'}}>
         {
           products.filter(product => product.categoryId === category.id).map(product => (
-            <li key={product.id}>
+            <div key={product.id} className='category-item'>
               {product.name}
-            </li>
+            </div>
           ))
         }
-      </ul>
+      </div>
     </div>
   );
 }

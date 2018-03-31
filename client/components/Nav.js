@@ -6,36 +6,55 @@ import { createCategoryThunk } from '../store';
 
 const Nav = (props) => {
   const { products, categories, createCategory } = props;
+  const path = props.location.pathname;
   return (
     <div>
-      <ul>
-        <li>
-          <button onClick={createCategory}>Add Category</button>
+      <button onClick={createCategory} className='btn btn-primary'>Add Category</button>
+      <ul className='nav'>
+        <li className='nav-item'>
+          {
+            path === '/' ? (
+              <span className='nav-link disabled'>
+                Home
+              </span>
+            ) : (
+              <Link to='/' className='nav-link'>
+                Home
+              </Link>
+            )
+          }
         </li>
-        <li>
-          <Link to='/'>
-            Home
-          </Link>
+        <li className='nav-item'>
+          {
+            path === '/products' ? (
+              <span className='nav-link disabled'>
+                All Products: <span className='badge badge-secondary'>{products.length}</span>
+              </span>
+            ) : (
+              <Link to='/products' className='nav-link'>
+                All Products: <span className='badge badge-primary'>{products.length}</span>
+              </Link>
+            )
+          }
         </li>
-        <li>
-          <Link to='/products'>
-            All Products: ({products.length})
-          </Link>
-        </li>
+      </ul>
+      <div className='category-container'>
         {
           categories.map(category => (
-            <li key={category.id}>
+            <div key={category.id} className='category-item'>
               <Link to={`/categories/${category.id}`}>
-                {category.name}:
-                ({
-                  products.filter(product => product.categoryId === category.id).length
-                })
-                Products
+                <h5>{category.name}</h5>
               </Link>
-            </li>
+              <span className='badge badge-warning'>
+                {
+                  products.filter(product => product.categoryId === category.id).length
+                }
+              </span>
+              &nbsp;Products
+            </div>
           ))
         }
-      </ul>
+      </div>
     </div>
   );
 }

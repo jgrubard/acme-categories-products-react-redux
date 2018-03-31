@@ -1,23 +1,16 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 import { createCategoryThunk } from '../store';
 
-import { connect } from 'react-redux';
-
-
 const Nav = (props) => {
   const { products, categories, createCategory } = props;
-
-  // if(!categories) {
-  //   return null;
-  // }
-
   return (
     <div>
       <ul>
         <li>
-          <button onClick={(ev) => createCategory(ev)}>Add Category</button>
+          <button onClick={createCategory}>Add Category</button>
         </li>
         <li>
           <Link to='/'>
@@ -56,8 +49,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    createCategory: (ev) => {
-      ev.preventDefault();
+    createCategory: () => {
       dispatch(createCategoryThunk({ name: `Category-${Math.round(Math.random()*999)}`}));
     }
   }

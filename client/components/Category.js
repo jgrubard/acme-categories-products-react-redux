@@ -1,18 +1,18 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { createProductThunk } from '../store'
+import { createProductThunk, deleteCategoryThunk, deleteProductsFromCategoryThunk } from '../store'
 
 const faker = require('faker');
 
 const Category = (props) => {
-  const { category, categories, products, createProduct } = props;
+  const { category, categories, products, createProduct, deleteCategory } = props;
   if(!category) {
     return null
   }
   return (
     <div>
       <h3>{category.name}</h3>
-      <button>Delete Category</button>
+      <button onClick={() => deleteCategory(products, category)}>Delete Category</button>
       <button onClick={() => createProduct(category.id)}>Add Product</button>
       <ul>
         {
@@ -36,9 +36,13 @@ const mapStateToProps = (state, ownProps) => {
   }
 }
 
-const mapStateToDispatch = (dispatch) => {
+const mapStateToDispatch = (dispatch, ownProps) => {
   return {
-    createProduct: (categoryId) => dispatch(createProductThunk({ name: faker.commerce.productName(), categoryId }))
+    createProduct: (categoryId) => dispatch(createProductThunk({ name: faker.commerce.productName(), categoryId })),
+    deleteCategory: (products, category) => {
+      dispatch(deleteProductsFromCategoryThunk(products, category));
+      dispatch(deleteCategoryThunk(category, ownProps.history));
+    }
   }
 }
 

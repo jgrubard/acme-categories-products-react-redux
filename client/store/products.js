@@ -3,6 +3,7 @@ import axios from 'axios';
 const GET_PRODUCTS = 'GET_PRODUCTS';
 const CREATE_PRODUCT = 'CREATE_PRODUCT';
 const DELETE_PRODUCT = 'DELETE_PRODUCT';
+const DELETE_PRODUCTS_FROM_CATEGORY = 'DELETE_PRODUCTS_FROM_CATEGORY';
 
 export const getProductsThunk = () => {
   return dispatch => {
@@ -30,6 +31,16 @@ export const deleteProductThunk = (product) => {
   }
 }
 
+export const deleteProductsFromCategoryThunk = (products, category) => {
+  return dispatch => {
+    products.filter(product => product.categoryId === category.id).forEach(product => {
+      return axios.delete(`/api/products/${product.id}`)
+        .then(() => dispatch({ type: DELETE_PRODUCTS_FROM_CATEGORY, category }))
+        .catch(err => console.error(err))
+    })
+  }
+}
+
 const reducer = (state = [], action) => {
   switch(action.type) {
 
@@ -41,6 +52,9 @@ const reducer = (state = [], action) => {
 
     case DELETE_PRODUCT:
       return state.filter(product => product.id !== action.product.id)
+
+    case DELETE_PRODUCTS_FROM_CATEGORY:
+      return state.filter(product => product.categoryId !== action.category.id)
 
   }
   return state;

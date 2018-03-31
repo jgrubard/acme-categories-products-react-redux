@@ -1,7 +1,8 @@
 import axios from 'axios';
 
 const GET_CATEGORIES = 'GET_CATEGORIES';
-const CREATE_CATEGORY = 'CREATE_CATEGORY'
+const CREATE_CATEGORY = 'CREATE_CATEGORY';
+const DELETE_CATEGORY = 'DELETE_CATEGORY';
 
 export const getCategoriesThunk = () => {
   return dispatch => {
@@ -21,6 +22,15 @@ export const createCategoryThunk = (category) => {
   }
 }
 
+export const deleteCategoryThunk = (category, history) => {
+  return dispatch => {
+    return axios.delete(`/api/categories/${category.id}`)
+      .then(() => dispatch({ type: DELETE_CATEGORY, category }))
+      .then(() => history.push('/'))
+      .catch(err => console.error(err))
+  }
+}
+
 const reducer = (state = [], action) => {
   switch(action.type) {
 
@@ -29,6 +39,9 @@ const reducer = (state = [], action) => {
 
     case CREATE_CATEGORY:
       return [ ...state, action.category ]
+
+    case DELETE_CATEGORY:
+      return state.filter(category => category.id !== action.category.id);
   }
   return state;
 }

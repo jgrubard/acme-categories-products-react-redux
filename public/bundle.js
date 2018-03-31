@@ -24323,7 +24323,7 @@ function verifySubselectors(mapStateToProps, mapDispatchToProps, mergeProps, dis
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.deleteProductThunk = exports.createProductThunk = exports.getProductsThunk = undefined;
+exports.deleteProductsFromCategoryThunk = exports.deleteProductThunk = exports.createProductThunk = exports.getProductsThunk = undefined;
 
 var _axios = __webpack_require__(42);
 
@@ -24336,6 +24336,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 var GET_PRODUCTS = 'GET_PRODUCTS';
 var CREATE_PRODUCT = 'CREATE_PRODUCT';
 var DELETE_PRODUCT = 'DELETE_PRODUCT';
+var DELETE_PRODUCTS_FROM_CATEGORY = 'DELETE_PRODUCTS_FROM_CATEGORY';
 
 var getProductsThunk = exports.getProductsThunk = function getProductsThunk() {
   return function (dispatch) {
@@ -24371,6 +24372,20 @@ var deleteProductThunk = exports.deleteProductThunk = function deleteProductThun
   };
 };
 
+var deleteProductsFromCategoryThunk = exports.deleteProductsFromCategoryThunk = function deleteProductsFromCategoryThunk(products, category) {
+  return function (dispatch) {
+    products.filter(function (product) {
+      return product.categoryId === category.id;
+    }).forEach(function (product) {
+      return _axios2.default.delete('/api/products/' + product.id).then(function () {
+        return dispatch({ type: DELETE_PRODUCTS_FROM_CATEGORY, category: category });
+      }).catch(function (err) {
+        return console.error(err);
+      });
+    });
+  };
+};
+
 var reducer = function reducer() {
   var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
   var action = arguments[1];
@@ -24386,6 +24401,11 @@ var reducer = function reducer() {
     case DELETE_PRODUCT:
       return state.filter(function (product) {
         return product.id !== action.product.id;
+      });
+
+    case DELETE_PRODUCTS_FROM_CATEGORY:
+      return state.filter(function (product) {
+        return product.categoryId !== action.category.id;
       });
 
   }
@@ -25286,7 +25306,7 @@ module.exports = function spread(callback) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.createCategoryThunk = exports.getCategoriesThunk = undefined;
+exports.deleteCategoryThunk = exports.createCategoryThunk = exports.getCategoriesThunk = undefined;
 
 var _axios = __webpack_require__(42);
 
@@ -25298,6 +25318,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
 var GET_CATEGORIES = 'GET_CATEGORIES';
 var CREATE_CATEGORY = 'CREATE_CATEGORY';
+var DELETE_CATEGORY = 'DELETE_CATEGORY';
 
 var getCategoriesThunk = exports.getCategoriesThunk = function getCategoriesThunk() {
   return function (dispatch) {
@@ -25323,6 +25344,18 @@ var createCategoryThunk = exports.createCategoryThunk = function createCategoryT
   };
 };
 
+var deleteCategoryThunk = exports.deleteCategoryThunk = function deleteCategoryThunk(category, history) {
+  return function (dispatch) {
+    return _axios2.default.delete('/api/categories/' + category.id).then(function () {
+      return dispatch({ type: DELETE_CATEGORY, category: category });
+    }).then(function () {
+      return history.push('/');
+    }).catch(function (err) {
+      return console.error(err);
+    });
+  };
+};
+
 var reducer = function reducer() {
   var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
   var action = arguments[1];
@@ -25334,6 +25367,11 @@ var reducer = function reducer() {
 
     case CREATE_CATEGORY:
       return [].concat(_toConsumableArray(state), [action.category]);
+
+    case DELETE_CATEGORY:
+      return state.filter(function (category) {
+        return category.id !== action.category.id;
+      });
   }
   return state;
 };
@@ -28490,9 +28528,9 @@ var _react2 = _interopRequireDefault(_react);
 
 var _reactRouterDom = __webpack_require__(48);
 
-var _store = __webpack_require__(20);
-
 var _reactRedux = __webpack_require__(9);
+
+var _store = __webpack_require__(20);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -28500,10 +28538,6 @@ var Nav = function Nav(props) {
   var products = props.products,
       categories = props.categories,
       createCategory = props.createCategory;
-
-  // if(!categories) {
-  //   return null;
-  // }
 
   return _react2.default.createElement(
     'div',
@@ -28516,9 +28550,7 @@ var Nav = function Nav(props) {
         null,
         _react2.default.createElement(
           'button',
-          { onClick: function onClick(ev) {
-              return createCategory(ev);
-            } },
+          { onClick: createCategory },
           'Add Category'
         )
       ),
@@ -28571,8 +28603,7 @@ var mapStateToProps = function mapStateToProps(state) {
 
 var mapDispatchToProps = function mapDispatchToProps(dispatch) {
   return {
-    createCategory: function createCategory(ev) {
-      ev.preventDefault();
+    createCategory: function createCategory() {
       dispatch((0, _store.createCategoryThunk)({ name: 'Category-' + Math.round(Math.random() * 999) }));
     }
   };
@@ -28681,7 +28712,8 @@ var Category = function Category(props) {
   var category = props.category,
       categories = props.categories,
       products = props.products,
-      createProduct = props.createProduct;
+      createProduct = props.createProduct,
+      deleteCategory = props.deleteCategory;
 
   if (!category) {
     return null;
@@ -28696,7 +28728,9 @@ var Category = function Category(props) {
     ),
     _react2.default.createElement(
       'button',
-      null,
+      { onClick: function onClick() {
+          return deleteCategory(products, category);
+        } },
       'Delete Category'
     ),
     _react2.default.createElement(
@@ -28733,10 +28767,14 @@ var mapStateToProps = function mapStateToProps(state, ownProps) {
   };
 };
 
-var mapStateToDispatch = function mapStateToDispatch(dispatch) {
+var mapStateToDispatch = function mapStateToDispatch(dispatch, ownProps) {
   return {
     createProduct: function createProduct(categoryId) {
       return dispatch((0, _store.createProductThunk)({ name: faker.commerce.productName(), categoryId: categoryId }));
+    },
+    deleteCategory: function deleteCategory(products, category) {
+      dispatch((0, _store.deleteProductsFromCategoryThunk)(products, category));
+      dispatch((0, _store.deleteCategoryThunk)(category, ownProps.history));
     }
   };
 };
